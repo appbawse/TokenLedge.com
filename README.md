@@ -1,0 +1,1 @@
+# SmartAffair.ai
