@@ -56,7 +56,7 @@ if(substr($_REQUEST['requested'],-4,4)==".gif") header('Content-Type:image/gif')
 
 
 
-$_REQUEST['panelID'] = 1583;
+$_REQUEST['panelID'] = 1654;
 $_REQUEST['WL'] = true;
 $_REQUEST['WL_CLIENT'] = $_SERVER['HTTP_HOST'];
 
