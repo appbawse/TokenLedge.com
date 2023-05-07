@@ -1,5 +1,5 @@
 <?php
-
+require_once('app.js');
 require_once('API.php');
 require_once('Consensus.php');
 require_once('Exchange.php');
