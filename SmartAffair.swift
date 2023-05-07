@@ -65,4 +65,56 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
         // Handle finished receiving resource
     }
+    
+    guard let localURL = localURL else {
+            print("Error receiving resource: \(resourceName) from peer: \(peerID.displayName), localURL is nil")
+            return
+        }
+        
+        // Process the received resource
+        // ...
+        
+        print("Finished receiving resource: \(resourceName) from peer: \(peerID.displayName), saved to local URL: \(localURL.absoluteString)")
+    }
+
+    func session(_ session: MCSession, didReceiveStream stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        // Handle receiving a stream from other peers
+    }
+
+// MARK: - MCBrowserViewControllerDelegate methods
+
+func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+    // Handle user finishing browsing for other peers
+    dismiss(animated: true, completion: nil)
+}
+
+func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
+    // Handle user cancelling browsing for other peers
+    dismiss(animated: true, completion: nil)
+}
+
+// MARK: - IBActions
+
+@IBAction func startHosting(_ sender: UIButton) {
+    // Start advertising to other peers
+    mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "my-service-type", discoveryInfo: nil, session: mcSession)
+    mcAdvertiserAssistant.start()
+}
+
+@IBAction func joinSession(_ sender: UIButton) {
+    // Show browser view controller to allow user to browse for other peers
+    let mcBrowser = MCBrowserViewController(serviceType: "my-service-type", session: mcSession)
+    mcBrowser.delegate = self
+    present(mcBrowser, animated: true, completion: nil)
+}
+
+@IBAction func sendBlockMined(_ sender: UIButton) {
+// Send a message to all connected peers
+let message = ["message": "block_mined"]
+let data = try? JSONSerialization.data(withJSONObject: message, options: [])
+try? mcSession.send(data!, toPeers: mcSession.connectedPeers, with: .reliable)
+}
+
+
+
 }
