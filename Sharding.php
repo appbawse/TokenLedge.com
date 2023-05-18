@@ -20,6 +20,7 @@ $shard_keys = array(
     '6' => 'MerkleTreeHash',
     '7' => 'MerkleTreeProofItem',
     '8' => 'MerkleTreeProof'
+    '9' => 'Balance'
 );
 
 // Insert sharding configuration into sharding table
@@ -105,3 +106,19 @@ foreach ($shard_keys as $shard_key => $shard_name) {
             FOREIGN KEY (merkle_tree_id) REFERENCES MerkleTree6(id) ON DELETE CASCADE ON UPDATE CASCADE,
             FOREIGN KEY (merkle_tree_hash_id) REFERENCES MerkleTreeHash6(id) ON DELETE CASCADE ON UPDATE CASCADE,
             FOREIGN KEY (merkle_tree_proof_item_id) REFERENCES MerkleTreeProofItem7(id) ON DELETE CASCADE ON UPDATE CASCADE)";
+        case 'Balance':
+            $sql .= ",
+            user_id INT(11) UNSIGNED NOT NULL,
+            token_id INT(11) UNSIGNED NOT NULL,
+            balance DECIMAL(18,8) NOT NULL,
+            merkle_tree_id INT(11) UNSIGNED NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES User0(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            FOREIGN KEY (merkle_tree_id) REFERENCES MerkleTree6(id) ON DELETE CASCADE ON UPDATE CASCADE";
+            break;
+    }
+    
+    $sql .= ")";
+    
+    $pdo->exec($sql);
+}
+
