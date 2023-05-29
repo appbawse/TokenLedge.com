@@ -82,3 +82,4 @@ foreach ($nodes as $nodeName => $node) {
                     ),
                     'encrypted_block' => base64_encode($encryptedBlockJson)
 );
+?>
