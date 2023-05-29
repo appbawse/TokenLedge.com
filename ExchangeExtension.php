@@ -97,3 +97,4 @@ class TokenExchangeExtension implements IExtensionPanel
         return $panel;
     }
 }
+?>
