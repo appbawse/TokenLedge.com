@@ -99,3 +99,4 @@ if(substr($_REQUEST['view'],-4,4)=='.css') header('Content-type:text/css');
 if(substr($_REQUEST['view'],-3,3)=='.js') header('Content-type:text/javscript');
 
 echo $panelReturn;
+?>
