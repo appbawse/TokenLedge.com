@@ -1,3 +1,5 @@
+<?php
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const redis = require('redis');
@@ -99,3 +101,5 @@ app.get('/protected', (req, res) => {
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
+
+?>
