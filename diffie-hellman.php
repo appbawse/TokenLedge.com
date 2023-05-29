@@ -50,3 +50,5 @@ $aliceSharedSecret = computeSharedSecret($aliceKeys['privateKey'], $alicePublicK
 
 // The shared secrets should be equal
 var_dump($aliceSharedSecret === $bobSharedSecret);
+
+?>
