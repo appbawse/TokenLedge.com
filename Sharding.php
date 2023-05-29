@@ -1,3 +1,5 @@
+<?php
+
 // Connect to the database
 $pdo = new PDO('mysql:host=localhost;dbname=my_db;charset=utf8mb4', 'username', 'password');
 
@@ -122,3 +124,4 @@ foreach ($shard_keys as $shard_key => $shard_name) {
     $pdo->exec($sql);
 }
 
+?>
