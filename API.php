@@ -1,3 +1,4 @@
+<?php
 const express = require('express');
 const bodyParser = require('body-parser');
 const Blockchain = require('./Blockchain');
@@ -107,4 +108,4 @@ function generateSharedSecret(publicKey, prime) {
 
 // Start the server
 app.listen(3000, () => console.log('Server started on port 3000'));
-
+?>
