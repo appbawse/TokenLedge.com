@@ -88,8 +88,8 @@ $REQ['JE'] = json_encode($JE);
 
 $REQ['METHOD'] = $_SERVER['REQUEST_METHOD'];
 
-if($exVIEW[0]=='assets') $panelReturn = callURL("http://saasblueprint.io/".$_REQUEST['view']);
-else $panelReturn = callURL("http://saasblueprint.io/".$_REQUEST['view'],$REQ);
+if($exVIEW[0]=='assets') $panelReturn = callURL("http://startwhatever.com/".$_REQUEST['view']);
+else $panelReturn = callURL("http://startwhatever.com/".$_REQUEST['view'],$REQ);
 
 if(substr($_REQUEST['view'],-4,4)=='.jpg') header('Content-type:image/jpeg'); 
 if(substr($_REQUEST['view'],-5,5)=='.jpeg') header('Content-type:image/jpeg');
