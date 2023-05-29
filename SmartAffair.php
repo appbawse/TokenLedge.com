@@ -12,3 +12,4 @@ require_once('Sharding.php');
 require_once('TokenExchange.php');
 require_once('TokenWalletExchangeExtension.php');
 require_once('diffie-hellman.php');
+php?>
