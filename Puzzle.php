@@ -1,3 +1,5 @@
+<?php
+
 // Add block to Keychain Services
 function addBlock($blockData) {
   $keychain = new Keychain();
@@ -36,3 +38,4 @@ function getPuzzles() {
   $puzzles = $keychain->getGenericPassword('puzzles');
   return json_decode($puzzles);
 }
+?>
