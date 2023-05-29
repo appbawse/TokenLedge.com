@@ -1,3 +1,4 @@
+<?php
 const express = require('express');
 const bodyParser = require('body-parser');
 const redis = require('redis');
@@ -72,3 +73,4 @@ client.get('https://api.example.com/data').then((response) => {
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
+?>
