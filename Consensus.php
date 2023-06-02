@@ -1,6 +1,6 @@
 <?php
 
-// Define the list of nodes ( Validators comoleted the Puzzle from the invited Stake-holders :
+// Define the list of nodes ( Validators completed the Puzzle from the invited Stake-holders :
 $nodes = array(
     'node1' => array(
         'address' => '192.168.1.1',
