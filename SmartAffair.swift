@@ -1,4 +1,5 @@
 import MultipeerConnectivity
+import CryptoKit
 
 class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
 
