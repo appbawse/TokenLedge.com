@@ -7,6 +7,10 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
     var browser: MCNearbyServiceBrowser!
     var advertiser: MCNearbyServiceAdvertiser!
 
+    let privateKey = try! P256.KeyAgreement.PrivateKey.generate()
+    let publicKey = privateKey.publicKey
+    let jwtSecret = "your_jwt_secret"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -81,6 +85,37 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
         // Handle receiving a stream from other peers
     }
 
+func generateEncryptedJWT() -> String? {
+    let payload = ["username": "JohnDoe"] // Replace with your desired payload
+    
+    // Convert the payload to JSON data
+    guard let payloadData = try? JSONSerialization.data(withJSONObject: payload, options: []) else {
+        return nil
+    }
+    
+    // Generate the SHA-256 hash of the payload
+    let hashedPayload = SHA256.hash(data: payloadData)
+    
+    // Sign the hash using the private key
+    let signature = try! privateKey.signature(for: hashedPayload)
+    
+    // Create a dictionary with the encrypted payload and signature
+    let encryptedJWT: [String: Any] = [
+        "payload": payloadData,
+        "signature": signature
+    ]
+    
+    // Convert the dictionary to JSON data
+    guard let encryptedJWTData = try? JSONSerialization.data(withJSONObject: encryptedJWT, options: []) else {
+        return nil
+    }
+    
+    // Encode the encrypted JWT data as a base64 string
+    let encryptedJWTString = encryptedJWTData.base64EncodedString()
+    
+    return encryptedJWTString
+}
+
 // MARK: - MCBrowserViewControllerDelegate methods
 
 func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
@@ -109,12 +144,23 @@ func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewCon
 }
 
 @IBAction func sendBlockMined(_ sender: UIButton) {
-// Send a message to all connected peers
-let message = ["message": "block_mined"]
-let data = try? JSONSerialization.data(withJSONObject: message, options: [])
-try? mcSession.send(data!, toPeers: mcSession.connectedPeers, with: .reliable)
+    // Generate the encrypted JWT
+    guard let encryptedJWT = generateEncryptedJWT() else {
+        print("Error generating encrypted JWT")
+        return
+    }
+    
+    // Send the encrypted JWT to all connected peers
+    let message = ["encryptedJWT": encryptedJWT]
+    guard let data = try? JSONSerialization.data(withJSONObject: message, options: []) else {
+        print("Error serializing message")
+        return
+    }
+    
+    do {
+        try session.send(data, toPeers: session.connectedPeers, with: .reliable)
+    } catch {
+        print("Error sending data: \(error)")
+    }
 }
-
-
-
 }
