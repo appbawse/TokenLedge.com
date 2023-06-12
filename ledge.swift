@@ -236,56 +236,57 @@ func routes(_ app: Application) throws {
     }
     
     app.get("address", ":id") { req -> EventLoopFuture<Address> in
-    guard let addressID = req.parameters.get("id", as: Int.self) else {
-        throw Abort(.badRequest)
-    }
-    return Address.find(addressID, on: req.db)
-        .unwrap(or: Abort(.notFound))
-}
-
-// Route to generate the Merkle tree hash
-app.get("merkleTreeHash") { req -> String in
-    // Generate the Merkle tree hash
-    let merkleTree = MerkleTree()
-    let merkleTreeHash = merkleTree.generateHash()
-    return merkleTreeHash
-}
-
-// Route to generate a Merkle tree proof item
-app.get("merkleTreeProofitem", ":index") { req -> String in
-    // Get the index parameter from the request
-    guard let index = req.parameters.get("index", as: Int.self) else {
-        throw Abort(.badRequest)
+        guard let addressID = req.parameters.get("id", as: Int.self) else {
+            throw Abort(.badRequest)
+        }
+        return Address.find(addressID, on: req.db)
+            .unwrap(or: Abort(.notFound))
     }
     
-    // Generate the Merkle tree proof item for the given index
-    let merkleTree = MerkleTree()
-    let proofItem = merkleTree.generateProofItem(at: index)
-    return proofItem
-}
-
-// Route to generate a Merkle tree proof
-app.get("merkleTreeProof", ":index") { req -> [String] in
-    // Get the index parameter from the request
-    guard let index = req.parameters.get("index", as: Int.self) else {
-        throw Abort(.badRequest)
+    // Route to generate the Merkle tree hash
+    app.get("merkleTreeHash") { req -> String in
+        // Generate the Merkle tree hash
+        let merkleTree = MerkleTree()
+        let merkleTreeHash = merkleTree.generateHash()
+        return merkleTreeHash
     }
     
-    // Generate the Merkle tree proof for the given index
-    let merkleTree = MerkleTree()
-    let proof = merkleTree.generateProof(at: index)
-    return proof
-}
-
-// Route to retrieve the balance based on the Merkle tree
-app.get("balance", ":index") { req -> Int in
-    // Get the index parameter from the request
-    guard let index = req.parameters.get("index", as: Int.self) else {
-        throw Abort(.badRequest)
+    // Route to generate a Merkle tree proof item
+    app.get("merkleTreeProofitem", ":index") { req -> String in
+        // Get the index parameter from the request
+        guard let index = req.parameters.get("index", as: Int.self) else {
+            throw Abort(.badRequest)
+        }
+        
+        // Generate the Merkle tree proof item for the given index
+        let merkleTree = MerkleTree()
+        let proofItem = merkleTree.generateProofItem(at: index)
+        return proofItem
     }
     
-    // Retrieve the balance based on the Merkle tree and the given index
-    let merkleTree = MerkleTree()
-    let balance = merkleTree.getBalance(at: index)
-    return balance
+    // Route to generate a Merkle tree proof
+    app.get("merkleTreeProof", ":index") { req -> [String] in
+        // Get the index parameter from the request
+        guard let index = req.parameters.get("index", as: Int.self) else {
+            throw Abort(.badRequest)
+        }
+        
+        // Generate the Merkle tree proof for the given index
+        let merkleTree = MerkleTree()
+        let proof = merkleTree.generateProof(at: index)
+        return proof
+    }
+    
+    // Route to retrieve the balance based on the Merkle tree
+    app.get("balance", ":index") { req -> Int in
+        // Get the index parameter from the request
+        guard let index = req.parameters.get("index", as: Int.self) else {
+            throw Abort(.badRequest)
+        }
+        
+        // Retrieve the balance based on the Merkle tree and the given index
+        let merkleTree = MerkleTree()
+        let balance = merkleTree.getBalance(at: index)
+        return balance
+    }
 }
