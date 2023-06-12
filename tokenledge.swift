@@ -2,6 +2,7 @@ import MultipeerConnectivity
 import CryptoKit
 import JWT
 import MerkleTools
+import CryptoKitRSA
 
 class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
 
@@ -14,7 +15,7 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
     let publicKey = privateKey.publicKey
     let jwtSecret = "your_jwt_secret"
     let merkleTools = MerkleTools()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -52,36 +53,20 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
         invitationHandler(true, session)
     }
 
-    // MARK: - MCSessionDelegate
+    // MARK: - MCSessionDelegate methods
 
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        // Handle peer state changes
-    }
-
-    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        // Decrypt and handle received data
-        guard let decryptedData = decrypt(data: data) else {
-            print("Error decrypting data")
-            return
+        // Handle session state changes
+        switch state {
+        case .connected:
+            print("Connected to peer: \(peerID.displayName)")
+        case .connecting:
+            print("Connecting to peer: \(peerID.displayName)")
+        case .notConnected:
+            print("Disconnected from peer: \(peerID.displayName)")
+        @unknown default:
+            break
         }
-        
-        handleReceivedData(decryptedData)
-    }
-
-    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        // Handle received stream
-    }
-
-    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        // Handle started receiving resource
-    }
-
-    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
-        // Handle finished receiving resource
-    }
-
-     func session(_ session: MCSession, didReceiveStream stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        // Handle receiving a stream from other peers
     }
 
     func session(_ session: MCSession, didReceiveCertificate certificate: [Any]?, fromPeer peerID: MCPeerID, certificateHandler: @escaping (Bool) -> Void) {
@@ -89,9 +74,18 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
         certificateHandler(true)
     }
 
-   // MARK: - MCBrowserViewControllerDelegate methods
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        // Handle received data
+        handleReceivedData(data)
+    }
 
-    func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
+    func session(_ session: MCSession, didReceiveStream stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        // Handle receiving a stream from other peers
+    }
+
+    // MARK: - MCBrowserViewControllerDelegate methods
+
+      func browserViewControllerDidFinish(_ browserViewController: MCBrowserViewController) {
         // Handle user finishing browsing for other peers
         dismiss(animated: true, completion: nil)
     }
@@ -121,23 +115,23 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
             print("Error generating encrypted JWT")
             return
         }
-        
+
         // Send the encrypted JWT to all connected peers
         let message = ["encryptedJWT": encryptedJWT]
         guard let data = try? JSONSerialization.data(withJSONObject: message, options: []) else {
             print("Error serializing message")
             return
         }
-        
+
         do {
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
             print("Error sending data: \(error)")
         }
     }
-    
+
     // MARK: - Encryption and Decryption
-    
+
     func encrypt(data: Data) -> Data? {
         do {
             let ciphertext = try CryptoKitRSA.encrypt(data, with: publicKey)
@@ -147,7 +141,7 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
             return nil
         }
     }
-    
+
     func decrypt(data: Data) -> Data? {
         do {
             let plaintext = try CryptoKitRSA.decrypt(data, with: privateKey)
@@ -157,38 +151,37 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
             return nil
         }
     }
-    
-    // MARK: - JWT Generation
-        
-    func generateEncryptedJWT() -> String? {
-    let payload = ["username": "JohnDoe"] // Replace with your desired payload
-    
-    // Convert the payload to JSON data
-    guard let payloadData = try? JSONSerialization.data(withJSONObject: payload, options: []) else {
-        return nil
-    }
-    
-    // Generate the JWT using the payload and secret
-    let jwt = JWT(payload: payloadData)
-    guard let jwtData = try? jwt.sign(using: .rs256(privateKey: privateKey)) else {
-        return nil
-    }
-    
-    // Add the JWT data to MerkleTools
-    merkleTools.addLeaf(jwtData)
-    
-    // Generate the Merkle root
-    let root = merkleTools.makeTree()
-    
-    // Encrypt the Merkle root data using RSA
-    guard let encryptedData = encrypt(data: root.data) else {
-        return nil
-    }
-    
-    // Encode the encrypted Merkle root data as a base64 string
-    let encryptedRootString = encryptedData.base64EncodedString()
-    
-    return encryptedRootString
-}
-}
 
+    // MARK: - JWT Generation
+
+    func generateEncryptedJWT() -> String? {
+        let payload = ["username": "JohnDoe"] // Replace with your desired payload
+
+        // Convert the payload to JSON data
+        guard let payloadData = try? JSONSerialization.data(withJSONObject: payload, options: []) else {
+            return nil
+        }
+
+        // Generate the JWT using the payload and secret
+        let jwt = JWT(payload: payloadData)
+        guard let jwtData = try? jwt.sign(using: .rs256(privateKey: privateKey)) else {
+            return nil
+        }
+
+        // Add the JWT data to MerkleTools
+        merkleTools.addLeaf(jwtData)
+
+        // Generate the Merkle root
+        let root = merkleTools.makeTree()
+
+        // Encrypt the Merkle root data using RSA
+        guard let encryptedData = encrypt(data: root.data) else {
+            return nil
+        }
+
+        // Encode the encrypted Merkle root data as a base64 string
+        let encryptedRootString = encryptedData.base64EncodedString()
+
+        return encryptedRootString
+    }
+}
