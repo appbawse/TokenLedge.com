@@ -1,3 +1,4 @@
+import SwiftRedis
 import MultipeerConnectivity
 import CryptoKit
 import JWT
@@ -33,6 +34,76 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
         // Start browsing and advertising for peers
         browser.startBrowsingForPeers()
         advertiser.startAdvertisingPeer()
+
+        connectToRedis()
+    }
+
+    func connectToRedis() {
+        let redis = Redis()
+
+        redis.connect(host: "localhost", port: 6379) { (redisError: NSError?) in
+            guard redisError == nil else {
+                print("Error connecting to Redis: \(redisError!)")
+                return
+            }
+
+            redis.get("merkle_tree_data") { (redisResponse: RedisResponse?, redisError: NSError?) in
+                guard redisError == nil, let redisMerkleTree = redisResponse?.asString() else {
+                    print("Error retrieving Merkle tree data from Redis: \(redisError!)")
+                    return
+                }
+
+                // Retrieve the latest Merkle tree data from MySQL
+                let latestMerkleTreeQuery = "SELECT tree_data FROM merkle_tree ORDER BY timestamp DESC LIMIT 1"
+                mysqlConnection.query(latestMerkleTreeQuery) { (mysqlResult: MySQLResult?) in
+                    guard let mysqlResult = mysqlResult else {
+                        print("Error retrieving Merkle tree data from MySQL: \(mysqlConnection.errorCode()) \(mysqlConnection.errorMessage())")
+                        return
+                    }
+
+                    if let mysqlMerkleTree = mysqlResult.next()?[0]?.asString() {
+                        // Compare the Merkle tree data from Redis and MySQL
+                        let redisTimestampQuery = "GET merkle_tree_timestamp"
+                        let mysqlTimestampQuery = "SELECT timestamp FROM merkle_tree ORDER BY timestamp DESC LIMIT 1"
+                        let multi = redis.multi()
+                        multi.sendCommand("GET", params: ["merkle_tree_timestamp"])
+                        multi.sendCommand("SELECT", params: ["timestamp FROM merkle_tree ORDER BY timestamp DESC LIMIT 1"])
+
+                        multi.exec { (redisResponses: [RedisResponse]?, redisError: NSError?) in
+                            guard redisError == nil, let redisResponses = redisResponses else {
+                                print("Error retrieving timestamps from Redis: \(redisError!)")
+                                return
+                            }
+
+                            let redisTimestamp = redisResponses[0].asString()
+                            let mysqlTimestamp = redisResponses[1].asString()
+
+                            if let redisTimestamp = redisTimestamp, let mysqlTimestamp = mysqlTimestamp {
+                                if let redisTimestampInt = Int(redisTimestamp), let mysqlTimestampInt = Int(mysqlTimestamp) {
+                                    if redisTimestampInt >= mysqlTimestampInt {                                         processMerkleTree(redisMerkleTree)
+                                    } else {
+                                        processMerkleTree(mysqlMerkleTree)
+                                    }
+                                }
+                            } else if let redisTimestamp = redisTimestamp {
+                                processMerkleTree(redisMerkleTree)
+                            } else if let mysqlTimestamp = mysqlTimestamp {
+                                processMerkleTree(mysqlMerkleTree)
+                            } else {
+                                print("No Merkle tree data found")
+                            }
+                        }
+                    } else {
+                        print("No Merkle tree data found in MySQL")
+                    }
+                }
+            }
+        }
+    }
+
+    func processMerkleTree(_ merkleTree: String) {
+        // Perform necessary processing or calculations on the latest Merkle tree data
+        print("Latest Merkle tree data: \(merkleTree)")
     }
 
     // MARK: - MCNearbyServiceBrowserDelegate
