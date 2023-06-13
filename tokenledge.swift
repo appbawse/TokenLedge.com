@@ -1,10 +1,12 @@
-import MySQL
 import SwiftRedis
+import CryptoKitRSA
+import UIKit
 import MultipeerConnectivity
 import CryptoKit
-import JWT
+import SwiftJWT
 import MerkleTools
-import CryptoKitRSA
+import Redis
+import MySQL
 
 class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
 
