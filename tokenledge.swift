@@ -1,3 +1,4 @@
+import Foundation
 import SwiftRedis
 import CryptoKitRSA
 import UIKit
