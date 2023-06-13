@@ -6,8 +6,6 @@ import MultipeerConnectivity
 import CryptoKit
 import SwiftJWT
 import MerkleTools
-import Redis
-import RediStack
 import MySQL
 
 class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
