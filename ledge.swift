@@ -127,8 +127,6 @@ final class Block: Model, Content {
         self.timestamp = timestamp
         self.previousHash = previousHash
         self.merkleRoot = merkleRoot
-        self.difficulty = difficulty
-        self.nonce = nonce
         self.hash = hash
     }
 }
