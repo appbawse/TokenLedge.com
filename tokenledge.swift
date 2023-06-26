@@ -249,6 +249,7 @@ if connected {
             "to_address_id": 789, // Replace with the actual to address ID
             "amount": 10.0, // Replace with the actual transaction amount
             "timestamp": "2023-06-11T12:34:56Z", // Replace with the actual transaction timestamp
+            "nonce": 12345,
             "hash": "transaction_hash" // Replace with the actual transaction hash
         ],
         "merkle_tree": [
