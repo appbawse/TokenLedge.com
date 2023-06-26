@@ -110,9 +110,6 @@ final class Block: Model, Content {
     @Field(key: "merkle_root")
     var merkleRoot: String
     
-    @Field(key: "difficulty")
-    var difficulty: Int
-    
     @Field(key: "nonce")
     var nonce: Int
     
@@ -127,6 +124,7 @@ final class Block: Model, Content {
         self.timestamp = timestamp
         self.previousHash = previousHash
         self.merkleRoot = merkleRoot
+        self.nonce = nonce
         self.hash = hash
     }
 }
