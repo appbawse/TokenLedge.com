@@ -280,7 +280,7 @@ func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
             "nonce": 12345,
             "hash": "transaction_hash" // Replace with the actual transaction hash
         ],
-        "merkleTree": [
+        "merkle_tree": [
             "root_hash": "merkle_root_hash", // Replace with the actual merkle root hash
             "tree_hash_1": "tree_hash_1", // Replace with the actual tree hash 1
             "tree_hash_2": "tree_hash_2", // Replace with the actual tree hash 2
