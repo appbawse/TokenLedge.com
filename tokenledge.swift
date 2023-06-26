@@ -9,24 +9,17 @@ import MerkleTools
 import MySQL
 
 class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
+    // Declare and initialize the mysqlConnection variable
+    var mysqlConnection = MySQL.Connection()
 
-     // Declare and initialize the mysqlConnection variable
-var mysqlConnection = MySQL.Connection()
+    // Connect to the MySQL server
+    let connected = mysqlConnection.connect(host: "localhost", user: "your_username", password: "your_password", database: "your_database_name")
 
-// Connect to the MySQL server
-let connected = mysqlConnection.connect(host: "localhost", user: "your_username", password: "your_password", database: "your_database_name")
-
-if connected {
-    print("Connected to MySQL server")
-} else {
-    print("Error connecting to MySQL server: \(mysqlConnection.errorCode()) \(mysqlConnection.errorMessage())")
-}
-    
+    // Other properties
     var peerID: MCPeerID!
     var session: MCSession!
     var browser: MCNearbyServiceBrowser!
     var advertiser: MCNearbyServiceAdvertiser!
-
     let privateKey = P256.KeyAgreement.PrivateKey()
     let publicKey = privateKey.publicKey
     let jwtSecret = "your_jwt_secret"
