@@ -239,6 +239,34 @@ if connected {
         }
     }
 
+    // Generate the Merkle root hash
+func generateMerkleRootHash(_ treeHashes: [String]) -> String {
+    let merkleTools = MerkleTools()
+    
+    // Add the tree hashes as leaf nodes
+    for hash in treeHashes {
+        merkleTools.addLeaf(hash.data(using: .utf8)!)
+    }
+    
+    // Generate the Merkle root
+    let root = merkleTools.makeTree()
+    
+    return root.hash
+}
+
+// Generate the Merkle tree proof item for the given index
+func generateProofItem(_ merkleTree: MerkleTree, at index: Int) -> String {
+    let proofItem = merkleTree.generateProofItem(at: index)
+    return proofItem.hash
+}
+
+// Generate the Merkle tree proof for the given index
+func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
+    let proof = merkleTree.generateProof(at: index)
+    return proof.map { $0.hash }
+}
+
+
     // MARK: - JWT Generation
 
     func generateEncryptedJWT() -> String? {
@@ -252,7 +280,7 @@ if connected {
             "nonce": 12345,
             "hash": "transaction_hash" // Replace with the actual transaction hash
         ],
-        "merkle_tree": [
+        "merkleTree": [
             "root_hash": "merkle_root_hash", // Replace with the actual merkle root hash
             "tree_hash_1": "tree_hash_1", // Replace with the actual tree hash 1
             "tree_hash_2": "tree_hash_2", // Replace with the actual tree hash 2
