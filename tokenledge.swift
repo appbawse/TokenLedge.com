@@ -10,6 +10,18 @@ import MySQL
 
 class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
 
+     // Declare and initialize the mysqlConnection variable
+var mysqlConnection = MySQL.Connection()
+
+// Connect to the MySQL server
+let connected = mysqlConnection.connect(host: "localhost", user: "your_username", password: "your_password", database: "your_database_name")
+
+if connected {
+    print("Connected to MySQL server")
+} else {
+    print("Error connecting to MySQL server: \(mysqlConnection.errorCode()) \(mysqlConnection.errorMessage())")
+}
+    
     var peerID: MCPeerID!
     var session: MCSession!
     var browser: MCNearbyServiceBrowser!
@@ -39,19 +51,6 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
         advertiser.startAdvertisingPeer()
 
         connectToRedis()
-        
-        // Declare and initialize the mysqlConnection variable
-var mysqlConnection = MySQL.Connection()
-
-// Connect to the MySQL server
-let connected = mysqlConnection.connect(host: "localhost", user: "your_username", password: "your_password", database: "your_database_name")
-
-if connected {
-    print("Connected to MySQL server")
-} else {
-    print("Error connecting to MySQL server: \(mysqlConnection.errorCode()) \(mysqlConnection.errorMessage())")
-}
-        
     }
 
     func connectToRedis() {
@@ -310,6 +309,5 @@ func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
         let encryptedRootString = encryptedData.base64EncodedString()
 
         return encryptedRootString
-    }
-
+        }
 }
