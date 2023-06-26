@@ -407,10 +407,24 @@ final class MerkleTree: Model, Content {
     }
 }
 
-func routes(_ app: Application) throws {
-    // Create MerkleTree
-    app.post("merkletrees") { req -> EventLoopFuture<MerkleTree> in
+func routes(_ app: Application)
+        // Create MerkleTree
+        app.post("merkletrees") { req -> EventLoopFuture<MerkleTree> in
         let merkleTree = try req.content.decode(MerkleTree.self)
+        
+        // Get the necessary tree hashes from the database or other source
+        let treeHashes: [String] = [
+            "tree_hash_1",
+            "tree_hash_2",
+            // Include more tree hashes as needed
+        ]
+        
+        // Generate the Merkle root hash
+        let merkleRootHash = generateMerkleRootHash(treeHashes)
+        
+        // Set the generated Merkle root hash on the MerkleTree model
+        merkleTree.rootHash = merkleRootHash
+        
         return merkleTree.save(on: req.db).map { merkleTree }
     }
     
