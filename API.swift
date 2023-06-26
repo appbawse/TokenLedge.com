@@ -248,9 +248,6 @@ func routes(_ app: Application) throws {
     @Field(key: "merkle_root")
     var merkleRoot: String
     
-    @Field(key: "difficulty")
-    var difficulty: Int
-    
     @Field(key: "nonce")
     var nonce: Int
     
@@ -265,7 +262,6 @@ func routes(_ app: Application) throws {
         self.timestamp = timestamp
         self.previousHash = previousHash
         self.merkleRoot = merkleRoot
-        self.difficulty = difficulty
         self.nonce = nonce
         self.hash = hash
     }
@@ -304,7 +300,6 @@ func routes(_ app: Application) throws {
                 block.timestamp = updatedBlock.timestamp
                 block.previousHash = updatedBlock.previousHash
                 block.merkleRoot = updatedBlock.merkleRoot
-                block.difficulty = updatedBlock.difficulty
                 block.nonce = updatedBlock.nonce
                 block.hash = updatedBlock.hash
                 return block.save(on: req.db).map { block }
