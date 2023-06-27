@@ -263,7 +263,20 @@ func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
 
     func generateEncryptedJWT() -> String? {
         let payload: [String: Any] = [
-            // Payload data
+         "user_id": 123, // Replace with the actual user ID
+         "transaction": [
+             "from_address_id": 456, // Replace with the actual from address ID
+             "to_address_id": 789, // Replace with the actual to address ID
+             "balance": 10.0, // Replace with the actual transaction amount
+             "timestamp": "2023-06-11T12:34:56Z", // Replace with the actual transaction timestamp
+             "nonce": 12345,
+             "hash": "transaction_hash" // Replace with the actual transaction hash
+         ],
+         "merkle_tree": [
+             "root_hash": "merkle_root_hash", // Replace with the actual merkle root hash
+             "tree_hash_1": "tree_hash_1", // Replace with the actual tree hash 1
+             "tree_hash_2": "tree_hash_2", // Replace with the actual tree hash 2
+             // Include more tree hashes as needed
         ]
 
         // Convert the payload to JSON data
