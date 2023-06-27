@@ -317,3 +317,4 @@ func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
         return encryptedRootString
         }
 }
+}
