@@ -159,8 +159,8 @@ func routes(_ app: Application) throws {
     @Field(key: "to_address_id")
     var toAddressID: Int
     
-    @Field(key: "amount")
-    var amount: Decimal
+    @Field(key: "balance")
+    var balance: Decimal
     
     @Field(key: "timestamp")
     var timestamp: Date
@@ -170,11 +170,11 @@ func routes(_ app: Application) throws {
     
     init() {}
     
-    init(id: Int? = nil, fromAddressID: Int, toAddressID: Int, amount: Decimal, timestamp: Date, hash: String) {
+    init(id: Int? = nil, fromAddressID: Int, toAddressID: Int, balance: Decimal, timestamp: Date, hash: String) {
         self.id = id
         self.fromAddressID = fromAddressID
         self.toAddressID = toAddressID
-        self.amount = amount
+        self.balance = balance
         self.timestamp = timestamp
         self.hash = hash
     }
