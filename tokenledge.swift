@@ -113,6 +113,33 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
         // Perform necessary processing or calculations on the latest Merkle tree data
         print("Latest Merkle tree data: \(merkleTree)")
     }
+    
+        // Generate the Merkle root hash
+func generateMerkleRootHash(_ treeHashes: [String]) -> String {
+    let merkleTools = MerkleTools()
+    
+    // Add the tree hashes as leaf nodes
+    for hash in treeHashes {
+        merkleTools.addLeaf(hash.data(using: .utf8)!)
+    }
+    
+    // Generate the Merkle root
+    let root = merkleTools.makeTree()
+    
+    return root.hash
+}
+
+// Generate the Merkle tree proof item for the given index
+func generateProofItem(_ merkleTree: MerkleTree, at index: Int) -> String {
+    let proofItem = merkleTree.generateProofItem(at: index)
+    return proofItem.hash
+}
+
+// Generate the Merkle tree proof for the given index
+func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
+    let proof = merkleTree.generateProof(at: index)
+    return proof.map { $0.hash }
+}
 
     // MARK: - MCNearbyServiceBrowserDelegate
 
@@ -230,35 +257,7 @@ class ViewController: UIViewController, MCSessionDelegate, MCNearbyServiceBrowse
             return nil
         }
     }
-
-    // Generate the Merkle root hash
-func generateMerkleRootHash(_ treeHashes: [String]) -> String {
-    let merkleTools = MerkleTools()
     
-    // Add the tree hashes as leaf nodes
-    for hash in treeHashes {
-        merkleTools.addLeaf(hash.data(using: .utf8)!)
-    }
-    
-    // Generate the Merkle root
-    let root = merkleTools.makeTree()
-    
-    return root.hash
-}
-
-// Generate the Merkle tree proof item for the given index
-func generateProofItem(_ merkleTree: MerkleTree, at index: Int) -> String {
-    let proofItem = merkleTree.generateProofItem(at: index)
-    return proofItem.hash
-}
-
-// Generate the Merkle tree proof for the given index
-func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
-    let proof = merkleTree.generateProof(at: index)
-    return proof.map { $0.hash }
-}
-
-
     // MARK: - JWT Generation
 
     func generateEncryptedJWT() -> String? {
