@@ -266,6 +266,7 @@ func generateProof(_ merkleTree: MerkleTree, at index: Int) -> [String] {
          "transaction": [
              "from_address_id": 456, // Replace with the actual from address ID
              "to_address_id": 789, // Replace with the actual to address ID
+             "previous_hash": "previous_hash",
              "balance": 10.0, // Replace with the actual transaction amount
              "timestamp": "2023-06-11T12:34:56Z", // Replace with the actual transaction timestamp
              "nonce": 12345,
